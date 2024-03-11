@@ -1,0 +1,6 @@
+servers:
+  mmo:
+    host: screeps.com
+    secure: true
+    token: "29a53ea7-9d79-412c-be16-7493e1bb169a"
+    branch: "default"
