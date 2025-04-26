@@ -26,9 +26,14 @@ jobs:
                  run: hostname -I
                - name: Install dependencies
                  run: npm install
+               - name: Setup required files
+                 run: node helper/preBuild.js
+               - name: Build bot
+                 run: npm run build
                - name: Start instances
-                 run: node server --maxTicks=25000 --debug --tickDuration=5000
+                 run: node helper/server --maxTicks=25000 --debug --tickDuration=10
                  env:
                     STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
-                    EXPORT_API_URL: ${{ secrets.EXPORT_API_URL }}
+                    EXPORT_DISCORD_WEBHOOK_URL: ${{ secrets.EXPORT_DISCORD_WEBHOOK_URL }}
+                    EXPORT_PASTEBIN_KEY: ${{ secrets.EXPORT_PASTEBIN_KEY }}
                     ACTIONS_RUNNER_NAME: ${{ runner.name }}

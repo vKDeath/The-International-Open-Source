@@ -1,11 +1,12 @@
 import {
-    CreepMemoryKeys,
-    customColors,
-    remoteTypeWeights,
-    Result,
-    RoomMemoryKeys,
-    RoomTypes,
-} from 'international/constants'
+  CreepMemoryKeys,
+  customColors,
+  remoteTypeWeights,
+  Result,
+  RoomMemoryKeys,
+  RoomTypes,
+  SleepFor,
+} from '../../../../constants/general'
 import { getRangeXY, randomIntRange, randomTick } from 'utils/utils'
 
 export class RemoteCoreAttacker extends Creep {
@@ -161,7 +162,7 @@ export class RemoteCoreAttacker extends Creep {
 
             const creepMemory = Memory.creeps[creep.name]
             if (
-                creepMemory[CreepMemoryKeys.sleepFor] === 'any' &&
+                creepMemory[CreepMemoryKeys.sleepFor] === SleepFor.any &&
                 creepMemory[CreepMemoryKeys.sleepTime] > Game.time
             ) {
                 creep.message = '😴'
@@ -198,7 +199,7 @@ export class RemoteCoreAttacker extends Creep {
                         avoidDanger: true,
                     }) === Result.fail
                 ) {
-                    creepMemory[CreepMemoryKeys.sleepFor] = 'any'
+                    creepMemory[CreepMemoryKeys.sleepFor] = SleepFor.any
                     creepMemory[CreepMemoryKeys.sleepTime] = Game.time + randomIntRange(10, 50)
                 }
 

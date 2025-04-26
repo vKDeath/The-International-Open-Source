@@ -1,29 +1,32 @@
 import { unpackPosAt, unpackPosList } from 'other/codec'
 import {
-    customColors,
-    WorkRequestKeys,
-    RoomMemoryKeys,
-    RoomTypes,
-    roomDimensions,
-    packedPosLength,
-} from './constants'
-import { customLog } from 'utils/logging'
-import { makeRoomCoord, roomNameFromRoomCoord } from '../utils/utils'
-import { CollectiveManager } from './collective'
-import { statsManager } from './statsManager'
+  customColors,
+  WorkRequestKeys,
+  RoomMemoryKeys,
+  RoomTypes,
+  roomDimensions,
+  packedPosLength,
+  FlagNames,
+  Result,
+} from '../constants/general'
+import { CommuneUtils } from 'room/commune/communeUtils'
 
 /**
  * Adds colours and annotations to the map if mapVisuals are enabled
  */
 export class MapVisualsManager {
-    run() {
-        if (!global.settings.mapVisuals) return
+    static run() {
+        if (!Game.flags[FlagNames.mapVisuals]) return
 
         for (const roomName in Memory.rooms) {
             const roomMemory = Memory.rooms[roomName]
 
             const type = roomMemory[RoomMemoryKeys.type]
-            if (!type) continue
+            if (type === undefined || type === null) continue
+
+            if (roomMemory[RoomMemoryKeys.type] === RoomTypes.commune) {
+                this.visualizeCommune(roomName, roomMemory)
+            }
 
             // Room type
 
@@ -42,11 +45,11 @@ export class MapVisualsManager {
                 const room = Game.rooms[roomName]
                 if (!room) continue
 
-                const anchor = room.roomManager.anchor
-                if (!anchor) throw Error('No anchor for mapVisuals commune ' + roomName)
-
+                // Energy
+                const storedEnergy = room.roomManager.resourcesInStoringStructures.energy;
+                const storedEnergyPercent = Math.floor((storedEnergy / CommuneUtils.minStoredEnergy(room)) * 100);
                 Game.map.visual.text(
-                    `⚡${room.roomManager.resourcesInStoringStructures.energy} / ${room.communeManager.minStoredEnergy}`,
+                    `⚡${storedEnergy}( ${storedEnergyPercent}%)`,
                     new RoomPosition(2, 8, roomName),
                     {
                         align: 'left',
@@ -81,6 +84,10 @@ export class MapVisualsManager {
                         fontSize: 4,
                     },
                 )
+
+                const anchor = room.roomManager.anchor
+                // if (!anchor) throw Error('No anchor for mapVisuals commune ' + roomName)
+                if (!anchor) continue;
 
                 if (roomMemory[RoomMemoryKeys.workRequest]) {
                     Game.map.visual.line(
@@ -117,7 +124,7 @@ export class MapVisualsManager {
                 const anchor = commune.roomManager.anchor
                 if (!anchor) throw Error('No anchor for mapVisuals remote ' + roomName)
 
-                if (commune) {
+                if (commune && commune.controller.my) {
                     for (const sourceIndex in roomMemory[
                         RoomMemoryKeys.remoteSourceFastFillerPaths
                     ]) {
@@ -186,7 +193,7 @@ export class MapVisualsManager {
                 continue
             }
 
-            if (roomMemory[RoomMemoryKeys.communePlanned] === false) {
+            if (roomMemory[RoomMemoryKeys.communePlanned] === Result.fail) {
                 Game.map.visual.circle(new RoomPosition(25, 25, roomName), {
                     stroke: customColors.red,
                     strokeWidth: 2,
@@ -198,7 +205,13 @@ export class MapVisualsManager {
 
         this.workRequests()
     }
-    private workRequests() {
+
+    private static visualizeCommune(roomName: string, roomMemory: RoomMemory) {
+
+
+    }
+
+    private static workRequests() {
         for (const roomName in Memory.workRequests) {
             const priority = Memory.workRequests[roomName][WorkRequestKeys.priority]
             const preference =
@@ -225,15 +238,15 @@ export class MapVisualsManager {
             }
         }
     }
-    private test(roomName: string, roomMemory: RoomMemory) {
-        /*
+    private static test(roomName: string, roomMemory: RoomMemory) {
+      /*
         Game.map.visual.text((Game.time - roomMemory[RoomMemoryKeys.lastScout]).toString(), new RoomPosition(2, 40, roomName), {
             align: 'left',
             fontSize: 5,
         })
         */
-        /*
-        const roomCoord = makeRoomCoord(roomName)
+      /*
+        const roomCoord = RoomNameUtils.pack(roomName)
         Game.map.visual.text(('x: ' + roomCoord.x + ', y: ' + roomCoord.y).toString(), new RoomPosition(2, 40, roomName), {
             align: 'left',
             fontSize: 5,
@@ -241,5 +254,3 @@ export class MapVisualsManager {
         */
     }
 }
-
-export const mapVisualsManager = new MapVisualsManager()

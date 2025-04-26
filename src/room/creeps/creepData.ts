@@ -1,43 +1,54 @@
 import { util } from "chai"
-import { utils } from "utils/utils"
+import { Utils } from 'utils/utils'
 
-export type Boosts = Partial<{[ key in MineralBoostConstant]: number }>
+export type Boosts = Partial<{ [key in MineralBoostConstant]: number }>
 
 export interface CreepData {
-  parts?: Partial<{[key in BodyPartConstant]: number }>
+  parts: Partial<{ [key in BodyPartConstant]: number }>
   /**
    * update when applying boosts
    */
-  upgradeStrength?: number
+  upgradeStrength: number
   /**
    * update when applying boosts
    */
-  boosts?: Boosts
+  boosts: Boosts
   /**
    * update when applying boosts
    */
-  defenceStrength?: number
+  defenceStrength: number
 }
+
+/**
+ * Inter-tick creep data
+ */
+export const creepData: { [creepName: string]: Partial<CreepData> } = {}
+
 /**
  * Handles cached data for creeps we own
  */
-export class CreepDataManager {
-  creepsData: {[creepName: string]: CreepData } = {}
+export class CreepDataProcs {
+  static initCreep(creepName: string) {
+    creepData[creepName] ??= {}
+  }
 
-  run() {
-
-    if (utils.isTickInterval(15)) {
-      this.updateCreeps()
+  static updateCreeps() {
+    for (const creepName in creepData) {
+      this.updateCreep(creepName)
     }
   }
 
-  updateCreeps() {
+  private static updateCreep(creepName: string) {
+    if (!Game.creeps[creepName]) {
+      delete creepData[creepName]
+      return
+    }
 
-    for (const creepName in Game.creeps) {
+    const data = creepData[creepName]
 
-      /* delete . */
+    /* .delete */
+
+    if (Utils.isTickInterval(15)) {
     }
   }
 }
-
-export const creepDataManager = new CreepDataManager()

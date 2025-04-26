@@ -1,17 +1,18 @@
 import {
-    RoomMemoryKeys,
-    RoomTypes,
-    chant,
-    customColors,
-    enemyDieChants,
-    friendlyDieChants,
-    powerCreepClassNames,
-} from 'international/constants'
-import { statsManager } from 'international/statsManager'
-import { customLog } from 'utils/logging'
+  MovedTypes,
+  RoomMemoryKeys,
+  RoomTypes,
+  customColors,
+  enemyDieChants,
+  friendlyDieChants,
+  powerCreepClassNames,
+} from '../../constants/general'
+import { StatsManager } from 'international/stats'
+import { LogOps } from 'utils/logOps'
 import { forCoordsInRange, randomOf, randomRange, randomTick } from 'utils/utils'
 import { RoomManager } from '../room'
 import { packCoord, unpackCoord } from 'other/codec'
+import { CommuneUtils } from 'room/commune/communeUtils'
 
 export class EndTickCreepManager {
     roomManager: RoomManager
@@ -21,68 +22,7 @@ export class EndTickCreepManager {
     }
 
     public run() {
-        const { room } = this.roomManager
         if (!this.roomManager.room.myCreeps.length) return
-
-        if (
-            Memory.rooms[room.name][RoomMemoryKeys.type] === RoomTypes.commune &&
-            room.communeManager.spawningStructuresManager.activeSpawns
-        ) {
-            for (const spawn of room.communeManager.spawningStructuresManager.activeSpawns) {
-                const creep = Game.creeps[spawn.spawning.name]
-
-                if (!creep.moveRequest) continue
-                if (!room.moveRequests[creep.moveRequest]) {
-                    creep.moved = 'moved'
-                    continue
-                }
-
-                room.roomManager.recurseMoveRequestOrder += 1
-
-                const creepNameAtPos =
-                    room.creepPositions[creep.moveRequest] ||
-                    room.powerCreepPositions[creep.moveRequest]
-                if (!creepNameAtPos) {
-                    creep.moved = creep.moveRequest
-                    delete room.moveRequests[creep.moveRequest]
-
-                    if (global.settings.roomVisuals) {
-                        const moved = unpackCoord(creep.moved)
-
-                        room.visual.rect(moved.x - 0.5, moved.y - 0.5, 1, 1, {
-                            fill: customColors.black,
-                            opacity: 0.7,
-                        })
-                    }
-                    continue
-                }
-
-                // There is a creep at the position
-                // just get us space to move into
-
-                const creepAtPos = Game.creeps[creepNameAtPos] || Game.powerCreeps[creepNameAtPos]
-                const packedCoord = packCoord(creep.pos)
-
-                if (global.settings.roomVisuals) {
-                    const moved = unpackCoord(creep.moveRequest)
-
-                    room.visual.rect(moved.x - 0.5, moved.y - 0.5, 1, 1, {
-                        fill: customColors.pink,
-                        opacity: 0.7,
-                    })
-                }
-
-                if (creepAtPos.shove(new Set([packedCoord]))) {
-                    creep.room.errorVisual(unpackCoord(creep.moveRequest))
-
-                    creep.moved = creep.moveRequest
-                    delete room.moveRequests[creep.moved]
-                    delete creep.moveRequest
-                }
-
-                continue
-            }
-        }
 
         // Power creeps go first
 
@@ -119,7 +59,7 @@ export class EndTickCreepManager {
     private runChant() {
         if (!global.settings.creepChant) return
 
-        const currentChant = chant[Memory.chantIndex]
+        const currentChant = global.settings.creepChant[Memory.chantIndex]
         if (!currentChant) return
 
         let creeps: (Creep | PowerCreep)[] = this.roomManager.room.myCreeps

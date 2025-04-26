@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://user-images.githubusercontent.com/48334001/189508568-fb2c91e5-e348-48c7-87ec-6626a81e1330.png" align="center">
+![Header-1](https://github.com/user-attachments/assets/7faab35c-0f73-4bc5-a0a9-f193faf4a40c)
 </div>
 
 [![Badge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
@@ -9,19 +9,20 @@
 
 [![Badge](https://github.com/The-International-Screeps-Bot/The-International-Open-Source/actions/workflows/CD.yml/badge.svg?branch=Development)](https://github.com/The-International-Screeps-Bot/The-International-Open-Source/actions/workflows/CD.yml)
 
+
 ## About
 
-The International is my bot for [Screeps](https://screeps.com/), thematically based after [communist](https://en.wikipedia.org/wiki/Communism) aesthetics. Owned rooms are called communes, offensive and defensive forces are called the Red Army, economic workers are known as the Proletariat, and the Revolutionaries establish new communes and rebuild destroyed ones.
+The International is my bot for [Screeps](https://screeps.com/).
 
-This bot can provide experienced and new players a reference for when they get stuck, need inspiration, or want to laugh at some terrible code. Comments are used commonly, and code is structured so it can be easily understood, replicated, and expanded upon. Please follow similar guidelines if you make a pull request 🙂.
+This bot can provide experienced and new players a reference for when they get stuck and need inspiration. Comments are used commonly, and code is structured so it can be easily understood, replicated, and expanded upon. That being said, there is much to improve.
 
-Feel welcome to fork it and otherwise use it, however do not be overly aggressive on the Screeps world, especially to newer players. The bot is intended to be automated, but can perform manual actions via the console. It has an information panel showing progress, events, economy, military, and more.
+Feel welcome to fork it and otherwise use it, however do not be overly aggressive on the Screeps world, especially to newer players. The bot is intended to be automated, but can perform manual actions via the console. it has a powerful economy, some (rather dysfunctional) combat code including quads and duos, has very good defensive capabilities, can automatically expand, can communicate with specified players that use the same protocol, as well as receive commands from my bot, and much more.
 
 If you have specific questions or want to discuss the bot, please join our discord server.
 
 [![Discord link](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/5QubDsB786)
 
-![Screenshot 2022-08-08 221219](https://user-images.githubusercontent.com/48334001/183549645-07cd2907-2e2f-443f-bcba-b70bce5fa28d.png)
+![image](https://github.com/The-International-Screeps-Bot/The-International-Open-Source/assets/48334001/961d8b2f-d63c-4ced-8a81-44c5e838f20a)
 ![map visuals](https://user-images.githubusercontent.com/48334001/232357947-7febd5e6-da7a-4f4f-b3fe-92bad7bb9005.png)
 ![Information panel](images/grafana.png)
 
@@ -47,7 +48,7 @@ First you'll want to download or fork the repository. Start by selecting a branc
 
 Ensure you have downloaded [Node](https://nodejs.org/en/)
 
-**Make sure your node version is below 17.0.0**
+**Consider using Node version if 20.10.0 if you have issues**
 
 You can check your node version with:
 
@@ -64,7 +65,6 @@ After making sure you have correct node version go to the project folder (not in
 
 ```powershell
 npm i
-
 ```
 
 And that's it. Join our [discord server](https://discord.gg/5QubDsB786) if you need help.
@@ -80,6 +80,8 @@ To begin, you need to decide what branch to use. Main is generally old but stabl
 Using [rollup](https://rollupjs.org/guide/en/) we will translate the code into a single js file, which will be used in environments set in `.screeps.yaml` file (see below if you don't have one yet). This compiles the code so it can be run by Screeps while we develop using folders and typescript.
 
 First, you'll need to set up your settings. In `/src` you'll find the `settings.example.ts` file. Please copy the file and rename its clone to `settings.ts`. Then change the `settingsExample` definition to `settings`. You can then add your own prefences, including checks based on the name of the shard for server-specific settings. These same instructions with an example are included in the file.
+
+Head to `src/other/userScript/userScript.example.ts` and follow the instructions at the top of the file. It will be very similar to settings up `settings.ts`.
 
 Next, rename `.screeps.yaml.example` to `.screeps.yaml` and fill in the required information for each environment you want to run the bot in. For the official server, replace the `token` with an [API token](https://docs.screeps.com/auth-tokens.html) for your account. On private servers, edit _(or copy and rename)_ the `pserver` section with `host` set to your server domain or IP then complete `username` and `password` with your credentials on this server. For more information about this file, check the [screeps unified credentials file](https://github.com/screepers/screepers-standards/blob/master/SS3-Unified_Credentials_File.md) spec.
 
@@ -110,7 +112,7 @@ I'd also suggest using this less-laggy tool [steamless-client](https://github.co
 
 ### Advanced usage
 
-If you want to run custom code without conflicting with the project's source - say, if you want to commit or make pull requests - it's recommended you use the userScript folder. Head to `src/other/userScript/userScript.example.ts` and follow the instructions at the top of the file.
+If you want to run custom code without conflicting with the project's source - say, if you want to commit or make pull requests - it's recommended you use the userScript folder.
 
 ## Contribution
 
